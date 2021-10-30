@@ -1,7 +1,7 @@
 import pointOnCircle from '../utils/pointOnCircle';
 
 // GET HEXAGON SHAPE
-const hexagon = (posX, posY, radius, p5) => {
+const Hexagon = (posX, posY, radius, p5) => {
   const rotAngle = p5.TWO_PI / 6;
   p5.beginShape();
   for (let i = 0; i < 6; i++) {
@@ -11,4 +11,4 @@ const hexagon = (posX, posY, radius, p5) => {
   p5.endShape(p5.CLOSE);
 };
 
-export default hexagon;
+export default Hexagon;
