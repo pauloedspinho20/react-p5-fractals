@@ -7,8 +7,8 @@ import hexagon from './shapes/hexagon';
 function App() {
   const CRYSTAL_SIZE = 500;
   const SIDES = 6;
-  const MIN_STROKE_WEIGHT = 2;
-  const MAX_STROKE_WEIGHT = 10;
+  const MIN_STROKE_WEIGHT = 1;
+  const MAX_STROKE_WEIGHT = 15;
   let PALETTE = [];
 
   // P5 SETUP
@@ -28,53 +28,90 @@ function App() {
     p5.rectMode(p5.CENTER);
   };
 
+  // SIMPLE LINES
+  const simpleLines = (p5, active = false) => {
+    if (active) {
+      const stepsOut = 8;
+      const numSteps = getRandomBoolean() ? stepsOut : Number(stepsOut * 1.25);
+      const step = (CRYSTAL_SIZE / 2) / numSteps;
+      const start = Math.floor(getRandomNumber(0, numSteps));
+      const stop = Math.floor(getRandomNumber(start, numSteps + 1));
+
+      const numShapes = getRandomBoolean() ? SIDES : SIDES * 2;
+      const strokeColor = getRandomFromPalette(PALETTE);
+      const strokeWeight = getRandomNumber(MIN_STROKE_WEIGHT, MAX_STROKE_WEIGHT);
+      const angle = 360 / numShapes;
+
+      p5.noFill();
+      p5.stroke(strokeColor);
+      p5.strokeWeight(strokeWeight);
+
+      p5.push();
+      p5.translate(p5.width / 2, p5.height / 2);
+      for (let i = 0; i < numShapes; i++) {
+        p5.line(start * step, 0, stop * step, 0);
+        p5.rotate(angle);
+      }
+      p5.pop();
+    }
+  };
+
   // OULINE SHAPE
-  const outlineShape = p5 => {
-    const strokeColor = getRandomFromPalette(PALETTE);
-    const strokeWeight = getRandomNumber(MIN_STROKE_WEIGHT, MAX_STROKE_WEIGHT);
-    const isHexagon = getRandomBoolean();
+  const outlineShape = (p5, active = false) => {
+    if (active) {
+      const strokeColor = getRandomFromPalette(PALETTE);
+      const strokeWeight = getRandomNumber(MIN_STROKE_WEIGHT, MAX_STROKE_WEIGHT);
+      const isHexagon = getRandomBoolean();
 
-    console.log(strokeWeight);
-
-    p5.stroke(strokeColor);
-    p5.strokeWeight(strokeWeight);
-    p5.push();
-    p5.translate(p5.width / 2, p5.height / 2);
-    if (isHexagon) {
-      hexagon(0, 0, CRYSTAL_SIZE / 2, p5);
+      p5.stroke(strokeColor);
+      p5.strokeWeight(strokeWeight);
+      p5.push();
+      p5.translate(p5.width / 2, p5.height / 2);
+      if (isHexagon) {
+        hexagon(0, 0, CRYSTAL_SIZE / 2, p5);
+      }
+      else {
+        p5.ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
+      }
+      p5.pop();
     }
-    else {
-      p5.ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
-    }
-    p5.pop();
   };
 
   // TEST LINES
-  const testLines = p5 => {
-    const numShapes = getRandomBoolean() ? SIDES : SIDES * 2;
-    const strokeColor = getRandomFromPalette(PALETTE);
-    const strokeWeight = getRandomNumber(MIN_STROKE_WEIGHT, MAX_STROKE_WEIGHT);
+  const testLines = (p5, active = false) => {
+    if (active) {
+      const numShapes = getRandomBoolean() ? SIDES : SIDES * 2;
+      const strokeColor = getRandomFromPalette(PALETTE);
+      const strokeWeight = getRandomNumber(MIN_STROKE_WEIGHT, MAX_STROKE_WEIGHT);
 
-    p5.noFill();
-    p5.stroke(PALETTE[0]);
-    p5.strokeWeight(strokeWeight);
-    p5.push();
-    p5.translate(p5.width / 2, p5.height / 2);
-    p5.ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
-    p5.stroke(strokeColor);
-    const angle = 360 / numShapes;
-    for (let i = 0; i < numShapes; i++) {
-      p5.line(0, 0, 0, CRYSTAL_SIZE / 2);
-      p5.rotate(angle);
+      p5.noFill();
+      p5.strokeWeight(strokeWeight);
+      p5.push();
+      p5.translate(p5.width / 2, p5.height / 2);
+      p5.ellipse(0, 0, CRYSTAL_SIZE, CRYSTAL_SIZE);
+      p5.stroke(strokeColor);
+      const angle = 360 / numShapes;
+      for (let i = 0; i < numShapes; i++) {
+        p5.line(0, 0, 0, CRYSTAL_SIZE / 2);
+        p5.rotate(angle);
+      }
+      p5.pop();
     }
-    p5.pop();
+  };
+
+  const setObjects = p5 => {
+    p5.clear();
+    testLines(p5, true);
+    simpleLines(p5, true);
+    outlineShape(p5, true);
   };
 
   // P5 DRAW
   const draw = p5 => {
-    testLines(p5);
-    outlineShape(p5);
-    console.log('erf');
+    setObjects(p5);
+    setInterval(() => {
+      setObjects(p5);
+    }, 1000);
   };
 
   return (
